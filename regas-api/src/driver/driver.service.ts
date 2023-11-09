@@ -1,42 +1,67 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { PageDto, PageMetaDto, PageOptionsDto } from 'src/page/dto';
+import { Page, PageMetadata, PaginationOptions } from 'src/page/models';
+import { RefuellingDto } from 'src/refuelling/dto';
+import { RefuellingService } from 'src/refuelling/refuelling.service';
+import { Driver, Refuelling } from '@prisma/client';
 
 @Injectable()
 export class DriverService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private refuellingService: RefuellingService,
+  ) {}
 
-  async listAll(pageOptionsDto: PageOptionsDto) {
-    const users = await this.prisma.driver.findMany({
+  async listAll(paginationOptions: PaginationOptions): Promise<Page<Driver>> {
+    const drivers = await this.prisma.driver.findMany({
       orderBy: {
-        createdAt: pageOptionsDto.order,
+        createdAt: paginationOptions.order,
       },
-      skip: pageOptionsDto.skip,
-      take: pageOptionsDto.take,
+      skip: paginationOptions.skip,
+      take: paginationOptions.take,
     });
 
-    const itemCount = users.length;
-    const pageMeta = new PageMetaDto({ itemCount, pageOptionsDto });
+    const totalItems = await this.prisma.driver.count();
 
-    return new PageDto(users, pageMeta);
+    return new Page(
+      drivers,
+      new PageMetadata({ totalItems, paginationOptions }),
+    );
   }
 
-  async getDriverHistory(id: string) {
-    const driverHistory = await this.prisma.driver.findUnique({
-      where: {
-        id: id,
-      },
+  async getDriverFuellingHistory(
+    id: string,
+    paginationOptions: PaginationOptions,
+  ): Promise<Page<RefuellingDto>> {
+    const driverData = await this.prisma.driver.findFirst({
       select: {
         refuellingHistory: true,
       },
+      where: {
+        id: id,
+      },
+      orderBy: {
+        createdAt: paginationOptions.order,
+      },
+      skip: paginationOptions.skip,
+      take: paginationOptions.take,
     });
 
-    if (!driverHistory) {
+    if (!driverData) {
       throw new BadRequestException(
-        'History not found by driver identification!',
+        'Driver not found by provided identification!',
       );
     }
 
-    return driverHistory;
+    const totalItems = driverData.refuellingHistory.length;
+    const pageMetadata = new PageMetadata({ totalItems, paginationOptions });
+
+    const driveFuellingHistory = driverData.refuellingHistory.map(
+      (fuelling) => {
+        return this.refuellingService.convertToDtoObject(fuelling);
+      },
+    );
+
+    return new Page(driveFuellingHistory, pageMetadata);
   }
 }

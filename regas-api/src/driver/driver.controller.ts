@@ -1,18 +1,36 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { DriverService } from './driver.service';
-import { PageOptionsDto } from 'src/page/dto';
+import { Page, PaginationOptions } from 'src/page/models';
+import { Driver } from '@prisma/client';
 
 @Controller('driver')
 export class DriverController {
   constructor(private driverService: DriverService) {}
 
   @Get()
-  listAll(@Query() pageOptionsDto: PageOptionsDto) {
-    return this.driverService.listAll(pageOptionsDto);
+  @HttpCode(HttpStatus.OK)
+  async listAll(
+    @Query() paginationOptions: PaginationOptions,
+  ): Promise<Page<Driver>> {
+    return this.driverService.listAll(paginationOptions);
   }
 
   @Get(':id')
-  getDriverHistory(@Param() params: any) {
-    return this.driverService.getDriverHistory(params.id);
+  @HttpCode(HttpStatus.OK)
+  async getDriverHistory(
+    @Param() params: any,
+    @Query() paginationOptions: PaginationOptions,
+  ) {
+    return this.driverService.getDriverFuellingHistory(
+      params.id,
+      paginationOptions,
+    );
   }
 }
