@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Refuelling {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  quantity   Float
+  fuelType String
+  totalPrice Float
+  Driver     Driver?  @relation(fields: [driverId], references: [id])
+  driverId   String
+
+  @@map("refuellings")
+}
+
+model Driver {
+  id                String          @id @default(uuid())
+  createdAt  DateTime @default(now())
+  name              String
+  refuellingHistory Refuelling[]
+
+  @@map("drivers")
+}
