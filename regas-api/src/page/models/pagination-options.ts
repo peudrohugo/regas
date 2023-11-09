@@ -6,7 +6,7 @@ export enum Order {
   DESC = 'desc',
 }
 
-export class PageOptionsDto {
+export class PaginationOptions {
   @IsEnum(Order)
   @IsOptional()
   readonly order?: Order = Order.ASC;
@@ -25,6 +25,6 @@ export class PageOptionsDto {
   readonly take?: number = 10;
 
   get skip(): number {
-    return (this.page - 1) * this.take;
+    return this.page * this.take;
   }
 }

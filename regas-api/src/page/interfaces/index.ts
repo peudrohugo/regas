@@ -1,1 +1,1 @@
-export * from './page-meta-parameters.dto';
+export * from './page-metadata-parameters';
