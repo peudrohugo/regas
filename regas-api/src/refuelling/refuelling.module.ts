@@ -4,6 +4,7 @@ import { RefuellingController } from './refuelling.controller';
 
 @Module({
   providers: [RefuellingService],
-  controllers: [RefuellingController]
+  controllers: [RefuellingController],
+  exports: [RefuellingService],
 })
 export class RefuellingModule {}

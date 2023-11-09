@@ -7,7 +7,7 @@ export class RefuellingController {
   constructor(private refuellingService: RefuellingService) {}
 
   @Post()
-  registerFuelling(@Body() dto: RefuellingDto) {
+  async registerFuelling(@Body() dto: RefuellingDto): Promise<RefuellingDto> {
     return this.refuellingService.registerFuelling(dto);
   }
 }
