@@ -1,14 +1,17 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  Post,
   Query,
 } from '@nestjs/common';
 import { DriverService } from './driver.service';
 import { Page, PaginationOptions } from 'src/page/models';
 import { Driver } from '@prisma/client';
+import { DriverDto } from './dto';
 
 @Controller('driver')
 export class DriverController {
@@ -32,5 +35,10 @@ export class DriverController {
       params.id,
       paginationOptions,
     );
+  }
+
+  @Post()
+  async signIn(@Body() dto: DriverDto) {
+    return this.driverService.createDriver(dto);
   }
 }

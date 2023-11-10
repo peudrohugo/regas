@@ -3,7 +3,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Page, PageMetadata, PaginationOptions } from 'src/page/models';
 import { RefuellingDto } from 'src/refuelling/dto';
 import { RefuellingService } from 'src/refuelling/refuelling.service';
-import { Driver, Refuelling } from '@prisma/client';
+import { Driver } from '@prisma/client';
+import { DriverDto } from './dto';
 
 @Injectable()
 export class DriverService {
@@ -63,5 +64,28 @@ export class DriverService {
     );
 
     return new Page(driveFuellingHistory, pageMetadata);
+  }
+
+  async createDriver(dto: DriverDto): Promise<DriverDto> {
+    if (dto.name == '' || dto.name == null || dto.name == undefined) {
+      throw new BadRequestException('Driver name cannot be empty!');
+    }
+
+    const driver = await this.prisma.driver.create({
+      data: {
+        name: dto.name,
+      },
+    });
+
+    return this.convertToDtoObject(driver);
+  }
+
+  convertToDtoObject(dbDriver: Driver): DriverDto {
+    const driverDto = new DriverDto();
+    driverDto.id = dbDriver.id;
+    driverDto.createdAt = dbDriver.createdAt;
+    driverDto.name = dbDriver.name;
+
+    return driverDto;
   }
 }
