@@ -1,19 +1,26 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { RefuellingDto } from 'src/refuelling/dto';
 
 export class DriverDto {
-  @IsNotEmpty()
   @IsString()
+  @IsOptional()
   id: string;
 
-  @IsNotEmpty()
-  createdAt: string;
+  @IsOptional()
+  createdAt: Date;
 
   @IsNotEmpty()
   @IsString()
   name: string;
 
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => RefuellingDto)
