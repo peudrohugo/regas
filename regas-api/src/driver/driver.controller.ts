@@ -27,6 +27,12 @@ export class DriverController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  async getDriver(@Param() params: any): Promise<DriverDto> {
+    return this.driverService.getDriver(params.id);
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
   async getDriverHistory(
     @Param() params: any,
     @Query() paginationOptions: PaginationOptions,

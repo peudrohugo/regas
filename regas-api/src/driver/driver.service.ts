@@ -30,6 +30,19 @@ export class DriverService {
     );
   }
 
+  async getDriver(id: string): Promise<DriverDto> {
+    return await this.prisma.driver.findUnique({
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+      },
+      where: {
+        id: id,
+      },
+    });
+  }
+
   async getDriverFuellingHistory(
     id: string,
     paginationOptions: PaginationOptions,
