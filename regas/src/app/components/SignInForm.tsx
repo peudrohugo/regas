@@ -7,6 +7,7 @@ import {
   Input,
   Button,
   Spinner,
+  useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -17,6 +18,7 @@ type FormData = z.infer<typeof signInSchema>;
 
 export default function SignInForm() {
   const router = useRouter();
+  const toast = useToast();
   const {
     handleSubmit,
     register,
@@ -26,14 +28,36 @@ export default function SignInForm() {
   });
 
   async function onSubmit(data: FormData) {
-    console.log(isSubmitting);
-    console.log(data);
-    // Replace this with a server action or fetch an API endpoint to authenticate
-    await new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 2000); // 2 seconds in milliseconds
+    const response = await fetch("http://localhost:3333/driver", {
+      method: "post",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: data.name,
+      }),
     });
+
+    const result = await response.json();
+
+    if (response.status == 201) {
+      toast({
+        title: `Welcome ${result?.name}`,
+        description: "You've signed in",
+        status: "success",
+        duration: 3000,
+      });
+    }
+    if (response.status == 400 || response.status == 500) {
+      toast({
+        title: `Could not sign in`,
+        description: "Something went wrong when trying to sign you in!",
+        status: "error",
+        duration: 3000,
+      });
+    }
+
+    localStorage.setItem("driver", JSON.stringify(result));
+
     router.push("/fuel");
   }
 
