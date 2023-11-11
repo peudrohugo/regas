@@ -31,7 +31,7 @@ export class DriverController {
     return this.driverService.getDriver(params.id);
   }
 
-  @Get(':id')
+  @Get('fuellingHistory/:id')
   @HttpCode(HttpStatus.OK)
   async getDriverHistory(
     @Param() params: any,
@@ -44,7 +44,7 @@ export class DriverController {
   }
 
   @Post()
-  async signIn(@Body() dto: DriverDto) {
+  async signIn(@Body() dto: DriverDto): Promise<DriverDto> {
     return this.driverService.createDriver(dto);
   }
 }
