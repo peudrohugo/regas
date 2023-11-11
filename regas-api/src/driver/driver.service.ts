@@ -31,7 +31,7 @@ export class DriverService {
   }
 
   async getDriver(id: string): Promise<DriverDto> {
-    return await this.prisma.driver.findUnique({
+    const driver = await this.prisma.driver.findUnique({
       select: {
         id: true,
         name: true,
@@ -41,6 +41,14 @@ export class DriverService {
         id: id,
       },
     });
+
+    if (!driver) {
+      throw new BadRequestException(
+        'Driver not found by provided identification!',
+      );
+    }
+
+    return driver;
   }
 
   async getDriverFuellingHistory(
