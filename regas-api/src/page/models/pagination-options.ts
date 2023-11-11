@@ -22,7 +22,7 @@ export class PaginationOptions {
   @Min(1)
   @Max(50)
   @IsOptional()
-  readonly take?: number = 10;
+  readonly take?: number = 25;
 
   get skip(): number {
     return this.page * this.take;
