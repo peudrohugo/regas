@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { DriverService } from './driver.service';
 import { Page, PaginationOptions } from 'src/page/models';
-import { Driver } from '@prisma/client';
 import { DriverDto } from './dto';
+import { Driver } from './dto/driver';
 
 @Controller('driver')
 export class DriverController {

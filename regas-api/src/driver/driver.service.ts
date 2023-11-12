@@ -3,8 +3,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Page, PageMetadata, PaginationOptions } from 'src/page/models';
 import { RefuellingDto } from 'src/refuelling/dto';
 import { RefuellingService } from 'src/refuelling/refuelling.service';
-import { Driver } from '@prisma/client';
 import { DriverDto } from './dto';
+import { Driver } from './dto/driver';
 
 @Injectable()
 export class DriverService {
